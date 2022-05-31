@@ -6,12 +6,12 @@ import (
 )
 
 type Item[T any] struct {
-	Id     string
+	Id     string `json:"id"`
 	born   time.Time
-	Data   T
-	Expire int64
+	Data   T     `json:"data"`
+	Expire int64 `json:"expire"`
 	mu     sync.Mutex
-	unit   time.Duration
+	Unit   time.Duration `json:"unit"`
 }
 
 func New[T any](id string, expire int64, data T) *Item[T] {
@@ -20,7 +20,7 @@ func New[T any](id string, expire int64, data T) *Item[T] {
 		born:   time.Now(),
 		Data:   data,
 		Expire: expire,
-		unit:   time.Millisecond,
+		Unit:   time.Millisecond,
 	}
 }
 
@@ -30,7 +30,7 @@ func NewWithUnit[T any](id string, data T, expire int64, unit time.Duration) *It
 		born:   time.Now(),
 		Data:   data,
 		Expire: expire,
-		unit:   unit,
+		Unit:   unit,
 	}
 }
 
@@ -78,6 +78,6 @@ func (i *Item[T]) Expired() bool {
 
 func calTimeDiff[T any](i Item[T]) int64 {
 	timeDif := time.Now().Sub(i.born)
-	escapeTime := timeDif / i.unit
+	escapeTime := timeDif / i.Unit
 	return int64(escapeTime)
 }
