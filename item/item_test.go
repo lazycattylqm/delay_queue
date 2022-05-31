@@ -1,6 +1,8 @@
 package item
 
 import (
+	"encoding/json"
+	"sync"
 	"testing"
 	"time"
 )
@@ -101,4 +103,26 @@ func TestNewWithUnitAndExpire(t *testing.T) {
 	if i.Expire != 0 {
 		t.Errorf("Item expire should be 0, got %d", i.Expire)
 	}
+}
+
+func TestMultiGoRoutine(t *testing.T) {
+	i := New("1", 1000, "test")
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		i.Update("test2")
+	}()
+	go func() {
+		defer wg.Done()
+		time.Sleep(time.Duration(3) * time.Second)
+		i.Update("test3")
+	}()
+	wg.Wait()
+	marshal, err := json.Marshal(i)
+	if err != nil {
+		t.Errorf("Marshal error: %s", err)
+	}
+	t.Logf("%s", string(marshal))
+
 }

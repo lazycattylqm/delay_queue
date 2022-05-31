@@ -35,14 +35,20 @@ func NewWithUnit[T any](id string, data T, expire int64, unit time.Duration) *It
 }
 
 func (i *Item[T]) UpdateWithFunc(data T, updateFunc func(old, new T) T) {
-	i.updateDataAndExpireTime(data, updateFunc)
+	if i.Expired() {
+		return
+	}
+	i.updateData(data, updateFunc)
 }
 
 func (i *Item[T]) Update(data T) {
-	i.updateDataAndExpireTime(data, nil)
+	if i.Expired() {
+		return
+	}
+	i.updateData(data, nil)
 }
 
-func (i *Item[T]) updateDataAndExpireTime(data T, updateFunc func(old, new T) T) {
+func (i *Item[T]) updateData(data T, updateFunc func(old, new T) T) {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 	if updateFunc == nil {
@@ -50,7 +56,7 @@ func (i *Item[T]) updateDataAndExpireTime(data T, updateFunc func(old, new T) T)
 	} else {
 		i.Data = updateFunc(i.Data, data)
 	}
-	i.updateExpireTime()
+
 }
 
 func (i *Item[T]) updateExpireTime() {
@@ -68,11 +74,7 @@ func (i *Item[T]) EqualId(another Item[T]) bool {
 func (i *Item[T]) Expired() bool {
 	i.mu.Lock()
 	defer i.mu.Unlock()
-	escapeTime := calTimeDiff(*i)
-	i.Expire = i.Expire - escapeTime
-	if i.Expire < 0 {
-		i.Expire = 0
-	}
+	i.updateExpireTime()
 	return i.Expire == 0
 }
 
