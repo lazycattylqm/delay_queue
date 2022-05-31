@@ -81,8 +81,7 @@ func (i *Item[T]) Expired() bool {
 }
 
 func (i *Item[T]) checkExpire() bool {
-	escapeTime := calTimeDiff(*i)
-	return i.Expire-escapeTime <= 0
+	return i.Expire <= 0
 }
 
 func calTimeDiff[T any](i Item[T]) int64 {
