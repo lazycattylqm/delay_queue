@@ -123,6 +123,7 @@ func TestMultiGoRoutine(t *testing.T) {
 	if err != nil {
 		t.Errorf("Marshal error: %s", err)
 	}
+	// the data should be test2 and test3 will never be updated
 	t.Logf("%s", string(marshal))
 
 }
