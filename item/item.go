@@ -34,21 +34,21 @@ func NewWithUnit[T any](id string, data T, expire int64, unit time.Duration) *It
 	}
 }
 
-func (i *Item[T]) UpdateWithFunc(data T, updateF func(old, new T) T) {
-	i.updateDataAndExpireTime(data, updateF)
+func (i *Item[T]) UpdateWithFunc(data T, updateFunc func(old, new T) T) {
+	i.updateDataAndExpireTime(data, updateFunc)
 }
 
 func (i *Item[T]) Update(data T) {
 	i.updateDataAndExpireTime(data, nil)
 }
 
-func (i *Item[T]) updateDataAndExpireTime(data T, updateF func(old, new T) T) {
+func (i *Item[T]) updateDataAndExpireTime(data T, updateFunc func(old, new T) T) {
 	i.mu.Lock()
 	defer i.mu.Unlock()
-	if updateF == nil {
+	if updateFunc == nil {
 		i.Data = data
 	} else {
-		i.Data = updateF(i.Data, data)
+		i.Data = updateFunc(i.Data, data)
 	}
 	i.updateExpireTime()
 }
