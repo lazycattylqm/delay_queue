@@ -1,7 +1,6 @@
 package main
 
 import (
-	"com.lqm.go.demo/item"
 	"context"
 	"fmt"
 )
@@ -9,12 +8,9 @@ import (
 func main() {
 	fmt.Println("Hello, World!")
 	ctx, cancelFunc := context.WithCancel(context.TODO())
-	itemValue := item.Item{
-		Id: "123",
-	}
 	go func() {
 		for i := 0; i < 10; i++ {
-			fmt.Printf("Hello, World! %v \n", itemValue)
+			fmt.Printf("Hello, World! %v \n", i)
 
 		}
 		cancelFunc()

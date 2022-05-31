@@ -80,3 +80,25 @@ func TestItemEqualIdNot(t *testing.T) {
 		t.Errorf("Item should be equal, got %s", i.Id)
 	}
 }
+
+func TestNewWithUnitAndExpire(t *testing.T) {
+	i := NewWithUnit("1", "test", 3, time.Second)
+	i.Update("test2")
+	if i.Data != "test2" {
+		t.Errorf("Item data should be test2, got %s", i.Data)
+	}
+	time.Sleep(1 * time.Second)
+	if i.Expired() {
+		t.Errorf("Item should not be expired, got %s", i.Id)
+	}
+	if i.Expire > 2 {
+		t.Errorf("Item expire should be less than 2, got %d", i.Expire)
+	}
+	time.Sleep(3 * time.Second)
+	if !i.Expired() {
+		t.Errorf("Item should be expired, got %s", i.Id)
+	}
+	if i.Expire != 0 {
+		t.Errorf("Item expire should be 0, got %d", i.Expire)
+	}
+}

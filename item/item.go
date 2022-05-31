@@ -65,3 +65,15 @@ func (i *Item[T]) updateExpireTime() {
 func (i *Item[T]) EqualId(another Item[T]) bool {
 	return i.Id == another.Id
 }
+
+func (i *Item[T]) Expired() bool {
+	i.mu.Lock()
+	defer i.mu.Unlock()
+	timeDif := time.Now().Sub(i.Born)
+	escapeTime := timeDif / i.unit
+	i.Expire = i.Expire - int64(escapeTime)
+	if i.Expire < 0 {
+		i.Expire = 0
+	}
+	return i.Expire == 0
+}
