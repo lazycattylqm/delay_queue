@@ -7,7 +7,7 @@ import (
 
 type Item[T any] struct {
 	Id     string
-	Born   time.Time
+	born   time.Time
 	Data   T
 	Expire int64
 	mu     sync.Mutex
@@ -17,7 +17,7 @@ type Item[T any] struct {
 func New[T any](id string, expire int64, data T) *Item[T] {
 	return &Item[T]{
 		Id:     id,
-		Born:   time.Now(),
+		born:   time.Now(),
 		Data:   data,
 		Expire: expire,
 		unit:   time.Millisecond,
@@ -27,7 +27,7 @@ func New[T any](id string, expire int64, data T) *Item[T] {
 func NewWithUnit[T any](id string, data T, expire int64, unit time.Duration) *Item[T] {
 	return &Item[T]{
 		Id:     id,
-		Born:   time.Now(),
+		born:   time.Now(),
 		Data:   data,
 		Expire: expire,
 		unit:   unit,
@@ -54,8 +54,7 @@ func (i *Item[T]) updateDataAndExpireTime(data T, updateF func(old, new T) T) {
 }
 
 func (i *Item[T]) updateExpireTime() {
-	timeDif := time.Now().Sub(i.Born)
-	escapeTime := timeDif / i.unit
+	escapeTime := calTimeDiff(*i)
 	i.Expire = i.Expire - int64(escapeTime)
 	if i.Expire < 0 {
 		i.Expire = 0
@@ -69,11 +68,16 @@ func (i *Item[T]) EqualId(another Item[T]) bool {
 func (i *Item[T]) Expired() bool {
 	i.mu.Lock()
 	defer i.mu.Unlock()
-	timeDif := time.Now().Sub(i.Born)
-	escapeTime := timeDif / i.unit
+	escapeTime := calTimeDiff(*i)
 	i.Expire = i.Expire - int64(escapeTime)
 	if i.Expire < 0 {
 		i.Expire = 0
 	}
 	return i.Expire == 0
+}
+
+func calTimeDiff[T any](i Item[T]) time.Duration {
+	timeDif := time.Now().Sub(i.born)
+	escapeTime := timeDif / i.unit
+	return escapeTime
 }
