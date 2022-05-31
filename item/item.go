@@ -55,7 +55,7 @@ func (i *Item[T]) updateDataAndExpireTime(data T, updateF func(old, new T) T) {
 
 func (i *Item[T]) updateExpireTime() {
 	escapeTime := calTimeDiff(*i)
-	i.Expire = i.Expire - int64(escapeTime)
+	i.Expire = i.Expire - escapeTime
 	if i.Expire < 0 {
 		i.Expire = 0
 	}
@@ -69,15 +69,15 @@ func (i *Item[T]) Expired() bool {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 	escapeTime := calTimeDiff(*i)
-	i.Expire = i.Expire - int64(escapeTime)
+	i.Expire = i.Expire - escapeTime
 	if i.Expire < 0 {
 		i.Expire = 0
 	}
 	return i.Expire == 0
 }
 
-func calTimeDiff[T any](i Item[T]) time.Duration {
+func calTimeDiff[T any](i Item[T]) int64 {
 	timeDif := time.Now().Sub(i.born)
 	escapeTime := timeDif / i.unit
-	return escapeTime
+	return int64(escapeTime)
 }
