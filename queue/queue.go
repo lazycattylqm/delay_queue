@@ -29,8 +29,8 @@ func (q *Queue) Find(item2 item.Item[any]) (result *item.Item[any]) {
 	q.mu.RLock()
 	defer q.mu.RUnlock()
 	return FindByItem(
-		q.Items, item2, func(a, b item.Item[any]) bool {
-			return a.EqualId(b)
+		q.Items, func(item item.Item[any]) bool {
+			return item.EqualId(item2)
 		},
 	)
 }
@@ -51,11 +51,26 @@ func (q *Queue) DeleteItem(value item.Item[any]) {
 	}
 	q.mu.Lock()
 	defer q.mu.Unlock()
-	FilterByItem(
-		q.Items, value, func(a, b item.Item[any]) bool {
-			return a.EqualId(b)
+	byItem := RejectByItem(
+		q.Items, func(a item.Item[any]) bool {
+			return a.EqualId(value)
 		},
 	)
+	q.Items = byItem
+}
+
+func (q *Queue) FilterItems(value item.Item[any]) {
+	if q.Find(value) == nil {
+		return
+	}
+	q.mu.Lock()
+	defer q.mu.Unlock()
+	byItem := FilterByItem(
+		q.Items, func(a item.Item[any]) bool {
+			return a.EqualId(value)
+		},
+	)
+	q.Items = byItem
 }
 
 func (q *Queue) UpdateItem(item2 item.Item[any], f func(e1, e2 *item.Item[any]) *item.Item[any]) {
