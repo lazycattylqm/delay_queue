@@ -81,7 +81,12 @@ func (q *Queue) UpdateItem(item2 item.Item[any], f func(e1, e2 *item.Item[any]) 
 	}
 	q.mu.Lock()
 	defer q.mu.Unlock()
-	find = f(find, &item2)
+	if f == nil {
+		find = &item2
+	} else {
+		find = f(find, &item2)
+	}
+
 }
 
 func (q *Queue) Offer(value item.Item[any], merge func(e1, e2 *item.Item[any]) *item.Item[any]) {
