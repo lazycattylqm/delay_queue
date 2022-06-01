@@ -1,6 +1,8 @@
 package queue
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestNew(t *testing.T) {
 	queue := New()
@@ -10,4 +12,8 @@ func TestNew(t *testing.T) {
 	if queue.C == nil {
 		t.Errorf("Expected queue to have a channel")
 	}
+}
+
+func TestAddItem(t *testing.T) {
+
 }
