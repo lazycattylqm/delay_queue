@@ -9,11 +9,21 @@ import (
 	"time"
 )
 
-func main() {
-	type A struct {
-		Name string
-		Age  int
+type A struct {
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+func (aa *A) String() string {
+	marshal, err := json.Marshal(aa)
+	if err != nil {
+		return err.Error()
 	}
+	return string(marshal)
+}
+
+func main() {
+
 	a := &A{
 		Name: "lqm",
 		Age:  18,
