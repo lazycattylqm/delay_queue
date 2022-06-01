@@ -49,10 +49,34 @@ func (q *Queue) DeleteItem(value item.Item[any]) {
 	if q.Find(value) == nil {
 		return
 	}
+	q.mu.Lock()
+	defer q.mu.Unlock()
 	FilterByItem(
 		q.Items, value, func(a, b item.Item[any]) bool {
 			return a.EqualId(b)
 		},
 	)
+}
 
+func (q *Queue) UpdateItem(item2 item.Item[any], f func(e1, e2 *item.Item[any]) *item.Item[any]) {
+	find := q.Find(item2)
+	if find == nil {
+		return
+	}
+	q.mu.Lock()
+	defer q.mu.Unlock()
+	find = f(find, &item2)
+}
+
+func (q *Queue) Take() {
+	go func() {
+		for {
+			for _, i := range q.Items {
+				if i.Expired() {
+					q.DeleteItem(*i)
+					q.C <- *i
+				}
+			}
+		}
+	}()
 }
