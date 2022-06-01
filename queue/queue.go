@@ -14,7 +14,7 @@ type Queue struct {
 
 func New() *Queue {
 	c := make(chan item.Item[any], 10)
-	items := make([]*item.Item[any], 10)
+	items := make([]*item.Item[any], 0)
 	return &Queue{
 		C:     c,
 		Items: items,
