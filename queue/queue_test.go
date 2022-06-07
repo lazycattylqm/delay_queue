@@ -108,3 +108,63 @@ func TestUpdate(t *testing.T) {
 		t.Errorf("expected as testtest")
 	}
 }
+
+func TestQueue_Offer(t *testing.T) {
+	itemA := item.Item[any]{
+		Id:     "1",
+		Expire: 3000,
+		Data:   "test",
+	}
+
+	itemB := item.Item[any]{
+		Id:     "2",
+		Expire: 3000,
+		Data:   "test2",
+	}
+
+	itemC := item.Item[any]{
+		Id:     "1",
+		Expire: 3000,
+		Data:   "testc",
+	}
+
+	itemD := item.Item[any]{
+		Id:     "3",
+		Expire: 3000,
+		Data:   "testd",
+	}
+
+	queue := New()
+	_ = queue.Add(itemA)
+	_ = queue.Add(itemB)
+	queue.Offer(
+		itemC, func(e1, e2 *item.Item[any]) *item.Item[any] {
+			data1 := fmt.Sprint(e1.Data)
+			data2 := fmt.Sprint(e2.Data)
+			return &item.Item[any]{
+				Id:     e1.Id,
+				Expire: e1.Expire,
+				Data:   data1 + " " + data2,
+			}
+		},
+	)
+	if queue.Items[0].Data != "test testc" {
+		t.Errorf("error expected test test")
+	}
+
+	queue.Offer(
+		itemD, func(e1, e2 *item.Item[any]) *item.Item[any] {
+			data1 := fmt.Sprint(e1.Data)
+			data2 := fmt.Sprint(e2.Data)
+			return &item.Item[any]{
+				Id:     e1.Id,
+				Expire: e1.Expire,
+				Data:   data1 + " " + data2,
+			}
+		},
+	)
+	if len(queue.Items) != 3 {
+		t.Errorf("expect len as 3 but now is %v", len(queue.Items))
+	}
+
+}

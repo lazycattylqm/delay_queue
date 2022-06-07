@@ -98,6 +98,7 @@ func (q *Queue) Offer(value item.Item[any], merge func(e1, e2 *item.Item[any]) *
 		if err != nil {
 			_ = fmt.Errorf("add item error: %s", err.Error())
 		}
+		return
 	}
 	q.UpdateItem(value, merge)
 }
