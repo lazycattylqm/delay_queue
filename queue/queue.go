@@ -11,14 +11,17 @@ type Queue[T any] struct {
 	C     chan item.Item[T]
 	Items []*item.Item[T]
 	mu    sync.RWMutex
+	F     chan int
 }
 
 func New[T any]() *Queue[T] {
 	c := make(chan item.Item[T], 10)
+	f := make(chan int)
 	items := make([]*item.Item[T], 0)
 	return &Queue[T]{
 		C:     c,
 		Items: items,
+		F:     f,
 	}
 }
 
@@ -100,6 +103,10 @@ func (q *Queue[T]) Offer(value item.Item[T], merge func(e1, e2 item.Item[T]) ite
 func (q *Queue[T]) Take() {
 	go func() {
 		for {
+			if len(q.Items) == 0 {
+				q.F <- -1
+				return
+			}
 			for _, i := range q.Items {
 				if i.Expired() {
 					q.DeleteItem(*i)
