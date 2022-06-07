@@ -8,7 +8,7 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	queue := New()
+	queue := New[string]()
 	if len(queue.Items) != 0 {
 		t.Errorf("Expected queue to be empty")
 	}
@@ -18,8 +18,8 @@ func TestNew(t *testing.T) {
 }
 
 func TestAddItem(t *testing.T) {
-	queue := New()
-	itemA := item.Item[any]{
+	queue := New[string]()
+	itemA := item.Item[string]{
 		Id:     "1",
 		Expire: 3000,
 		Data:   "test",
@@ -34,8 +34,8 @@ func TestAddItem(t *testing.T) {
 }
 
 func TestDeleteCaseOne(t *testing.T) {
-	queue := New()
-	itemA := item.Item[any]{
+	queue := New[string]()
+	itemA := item.Item[string]{
 		Id:     "1",
 		Expire: 3000,
 		Data:   "test",
@@ -50,18 +50,18 @@ func TestDeleteCaseOne(t *testing.T) {
 }
 
 func TestFilter(t *testing.T) {
-	queue := New()
-	itemA := item.Item[any]{
+	queue := New[string]()
+	itemA := item.Item[string]{
 		Id:     "1",
 		Expire: 3000,
 		Data:   "test",
 	}
-	itemB := item.Item[any]{
+	itemB := item.Item[string]{
 		Id:     "2",
 		Expire: 3000,
 		Data:   "test",
 	}
-	itemC := item.Item[any]{
+	itemC := item.Item[string]{
 		Id:     "3",
 		Expire: 3000,
 		Data:   "test",
@@ -76,13 +76,13 @@ func TestFilter(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	queue := New()
-	itemA := item.Item[any]{
+	queue := New[string]()
+	itemA := item.Item[string]{
 		Id:     "1",
 		Expire: 3000,
 		Data:   "test",
 	}
-	itemB := item.Item[any]{
+	itemB := item.Item[string]{
 		Id:     "2",
 		Expire: 3000,
 		Data:   "test",
@@ -91,14 +91,14 @@ func TestUpdate(t *testing.T) {
 	_ = queue.Add(itemB)
 
 	queue.UpdateItem(
-		item.Item[any]{
+		item.Item[string]{
 			Id:     "1",
 			Expire: 3000,
 			Data:   "test",
-		}, func(e1, e2 *item.Item[any]) *item.Item[any] {
+		}, func(e1, e2 *item.Item[string]) *item.Item[string] {
 			data := fmt.Sprint(e1.Data)
 			data2 := fmt.Sprint(e2.Data)
-			return &item.Item[any]{
+			return &item.Item[string]{
 				Id:     e2.Id,
 				Expire: e2.Expire + 1000,
 				Data:   data + data2,
@@ -111,38 +111,38 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestQueue_Offer(t *testing.T) {
-	itemA := item.Item[any]{
+	itemA := item.Item[string]{
 		Id:     "1",
 		Expire: 3000,
 		Data:   "test",
 	}
 
-	itemB := item.Item[any]{
+	itemB := item.Item[string]{
 		Id:     "2",
 		Expire: 3000,
 		Data:   "test2",
 	}
 
-	itemC := item.Item[any]{
+	itemC := item.Item[string]{
 		Id:     "1",
 		Expire: 3000,
 		Data:   "testc",
 	}
 
-	itemD := item.Item[any]{
+	itemD := item.Item[string]{
 		Id:     "3",
 		Expire: 3000,
 		Data:   "testd",
 	}
 
-	queue := New()
+	queue := New[string]()
 	_ = queue.Add(itemA)
 	_ = queue.Add(itemB)
 	queue.Offer(
-		itemC, func(e1, e2 *item.Item[any]) *item.Item[any] {
+		itemC, func(e1, e2 *item.Item[string]) *item.Item[string] {
 			data1 := fmt.Sprint(e1.Data)
 			data2 := fmt.Sprint(e2.Data)
-			return &item.Item[any]{
+			return &item.Item[string]{
 				Id:     e1.Id,
 				Expire: e1.Expire,
 				Data:   data1 + " " + data2,
@@ -154,10 +154,10 @@ func TestQueue_Offer(t *testing.T) {
 	}
 
 	queue.Offer(
-		itemD, func(e1, e2 *item.Item[any]) *item.Item[any] {
+		itemD, func(e1, e2 *item.Item[string]) *item.Item[string] {
 			data1 := fmt.Sprint(e1.Data)
 			data2 := fmt.Sprint(e2.Data)
-			return &item.Item[any]{
+			return &item.Item[string]{
 				Id:     e1.Id,
 				Expire: e1.Expire,
 				Data:   data1 + " " + data2,
@@ -178,14 +178,14 @@ func TestQueue_Take(t *testing.T) {
 	itemC := item.NewOne("3", 3000, "testc")
 
 	queue := New[string]()
-	queue.Add(itemA)
-	queue.Add(itemB)
-	queue.Add(itemC)
+	_ = queue.Add(itemA)
+	_ = queue.Add(itemB)
+	_ = queue.Add(itemC)
 	queue.Take()
 
-	var out item.Item[any]
+	var out item.Item[string]
 	select {
 	case out = <-queue.C:
-		fmt.Sprintf("%v %v ", time.Now(), out.Data)
+		fmt.Printf("%v %v ", time.Now(), out.Data)
 	}
 }
