@@ -22,8 +22,27 @@ func (aa *A) String() string {
 	return string(marshal)
 }
 
-func main() {
+func (aa A) NameforA() {
+	fmt.Println("Name for A")
 
+}
+
+type B struct {
+	A
+}
+
+func (b *B) NameforA() {
+	fmt.Println("Name for B")
+	b.A.NameforA()
+}
+
+func main() {
+	b := new(B)
+	b.NameforA()
+
+}
+
+func TestB() {
 	a := &A{
 		Name: "lqm",
 		Age:  18,
@@ -38,7 +57,6 @@ func main() {
 	fmt.Printf("as is %v \n", as)
 	a.Name = "lqm2"
 	fmt.Printf("as is %v \n", as)
-
 }
 
 func simpleTestA() {

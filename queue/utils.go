@@ -1,12 +1,12 @@
 package queue
 
-func FindByItem[T any](items []*T, f func(e1 T) bool) *T {
-	for _, i := range items {
-		if f(*i) {
-			return i
+func FindByItem[T any](items []*T, f func(e1 T) bool) (int, *T) {
+	for index, element := range items {
+		if f(*element) {
+			return index, element
 		}
 	}
-	return nil
+	return -1, nil
 }
 
 func FilterByItem[T any](items []*T, f func(e1 T) bool) []*T {
