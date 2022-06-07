@@ -3,7 +3,10 @@ package delay_queue
 import (
 	"com.lqm.demo/queue"
 	"com.lqm.go.demo/item"
+	"context"
+	"fmt"
 	"sync"
+	"time"
 )
 
 type DelayQueue[T any] struct {
@@ -22,4 +25,28 @@ func (dq *DelayQueue[T]) OfferTask(item item.Item[T], f func(old, new item.Item[
 	dq.mu.Lock()
 	defer dq.mu.Unlock()
 	dq.queue.Offer(item, f)
+}
+
+func (dq *DelayQueue[T]) Run() {
+	dq.queue.Take()
+}
+
+func (dq *DelayQueue[T]) ExeFuncWhenDone(after <-chan time.Time, f func(id string, data T)) {
+	ctx, cancelFunc := context.WithCancel(context.TODO())
+	go func() {
+		for {
+			select {
+			case outItem := <-dq.queue.C:
+				f(outItem.Id, outItem.Data)
+			case <-after:
+				fmt.Println("for time out finish")
+				cancelFunc()
+			}
+		}
+	}()
+	select {
+	case <-ctx.Done():
+		fmt.Println("finished by user or other reason")
+	}
+
 }
