@@ -94,6 +94,9 @@ func (i *Item[T]) checkExpired() bool {
 
 func calTimeDiff[T any](i Item[T]) int64 {
 	timeDif := time.Now().Sub(i.born)
+	if i.Unit == 0 {
+		return i.Expire
+	}
 	escapeTime := timeDif / i.Unit
 	return int64(escapeTime)
 }
