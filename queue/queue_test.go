@@ -4,6 +4,7 @@ import (
 	"com.lqm.go.demo/item"
 	"fmt"
 	"testing"
+	"time"
 )
 
 func TestNew(t *testing.T) {
@@ -167,4 +168,24 @@ func TestQueue_Offer(t *testing.T) {
 		t.Errorf("expect len as 3 but now is %v", len(queue.Items))
 	}
 
+}
+
+func TestQueue_Take(t *testing.T) {
+	itemA := item.NewOne("1", 1000, "test")
+
+	itemB := item.NewOne("2", 2000, "testb")
+
+	itemC := item.NewOne("3", 3000, "testc")
+
+	queue := New[string]()
+	queue.Add(itemA)
+	queue.Add(itemB)
+	queue.Add(itemC)
+	queue.Take()
+
+	var out item.Item[any]
+	select {
+	case out = <-queue.C:
+		fmt.Sprintf("%v %v ", time.Now(), out.Data)
+	}
 }
