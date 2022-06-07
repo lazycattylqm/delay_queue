@@ -9,7 +9,39 @@ import (
 	"time"
 )
 
+type A struct {
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+func (aa *A) String() string {
+	marshal, err := json.Marshal(aa)
+	if err != nil {
+		return err.Error()
+	}
+	return string(marshal)
+}
+
 func main() {
+
+	a := &A{
+		Name: "lqm",
+		Age:  18,
+	}
+	b := &A{
+		Name: "fxl",
+		Age:  17,
+	}
+	as := make([]*A, 0)
+	as = append(as, a)
+	as = append(as, b)
+	fmt.Printf("as is %v \n", as)
+	a.Name = "lqm2"
+	fmt.Printf("as is %v \n", as)
+
+}
+
+func simpleTestA() {
 	fmt.Println("Hello, World!")
 	ctx, cancelFunc := context.WithCancel(context.TODO())
 

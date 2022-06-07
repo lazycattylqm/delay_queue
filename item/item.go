@@ -24,6 +24,16 @@ func New[T any](id string, expire int64, data T) *Item[T] {
 	}
 }
 
+func NewOne[T any](id string, expire int64, data T) Item[T] {
+	return Item[T]{
+		Id:     id,
+		born:   time.Now(),
+		Data:   data,
+		Expire: expire,
+		Unit:   time.Millisecond,
+	}
+}
+
 func NewWithUnit[T any](id string, data T, expire int64, unit time.Duration) *Item[T] {
 	return &Item[T]{
 		Id:     id,
