@@ -3,6 +3,7 @@ package queue
 import (
 	"com.lqm.go.demo/item"
 	"fmt"
+
 	"testing"
 	"time"
 )
@@ -171,11 +172,12 @@ func TestQueue_Offer(t *testing.T) {
 }
 
 func TestQueue_Take(t *testing.T) {
-	itemA := item.NewOne("1", 1000, "test")
+	after := time.After(5 * time.Second)
+	itemA := item.NewOne("1", 2000, "test")
 
 	itemB := item.NewOne("2", 2000, "testb")
 
-	itemC := item.NewOne("3", 3000, "testc")
+	itemC := item.NewOne("3", 1000, "testc")
 
 	queue := New[string]()
 	_ = queue.Add(itemA)
@@ -184,8 +186,13 @@ func TestQueue_Take(t *testing.T) {
 	queue.Take()
 
 	var out item.Item[string]
-	select {
-	case out = <-queue.C:
-		fmt.Printf("%v %v ", time.Now(), out.Data)
+	for {
+		select {
+		case out = <-queue.C:
+			fmt.Printf("%v %v \n", time.Now(), out.Data)
+		case <-after:
+			fmt.Println("finish")
+			return
+		}
 	}
 }
