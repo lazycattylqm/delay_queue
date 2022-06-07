@@ -23,12 +23,22 @@ func (aa *A) String() string {
 }
 
 func (aa A) NameforA() {
-	aa.Name = "lqiming"
+	fmt.Println("Name for A")
+
+}
+
+type B struct {
+	A
+}
+
+func (b *B) NameforA() {
+	fmt.Println("Name for B")
+	b.A.NameforA()
 }
 
 func main() {
-
-	TestB()
+	b := new(B)
+	b.NameforA()
 
 }
 
