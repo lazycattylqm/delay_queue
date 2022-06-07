@@ -9,7 +9,7 @@ type tempS struct {
 func TestFindByItem(t *testing.T) {
 
 	array := initData()
-	item := FindByItem[tempS](
+	_, item := FindByItem[tempS](
 		array, func(e1 tempS) bool {
 			return e1.Id == 5
 		},
