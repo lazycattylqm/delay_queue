@@ -2,6 +2,7 @@ package queue
 
 import (
 	"com.lqm.go.demo/item"
+	"fmt"
 	"testing"
 )
 
@@ -70,5 +71,40 @@ func TestFilter(t *testing.T) {
 	queue.FilterItems(itemA)
 	if len(queue.Items) != 1 {
 		t.Errorf("Expected queue to have 1 items")
+	}
+}
+
+func TestUpdate(t *testing.T) {
+	queue := New()
+	itemA := item.Item[any]{
+		Id:     "1",
+		Expire: 3000,
+		Data:   "test",
+	}
+	itemB := item.Item[any]{
+		Id:     "2",
+		Expire: 3000,
+		Data:   "test",
+	}
+	_ = queue.Add(itemA)
+	_ = queue.Add(itemB)
+
+	queue.UpdateItem(
+		item.Item[any]{
+			Id:     "1",
+			Expire: 3000,
+			Data:   "test",
+		}, func(e1, e2 *item.Item[any]) *item.Item[any] {
+			data := fmt.Sprint(e1.Data)
+			data2 := fmt.Sprint(e2.Data)
+			return &item.Item[any]{
+				Id:     e2.Id,
+				Expire: e2.Expire + 1000,
+				Data:   data + data2,
+			}
+		},
+	)
+	if queue.Items[0].Data != "testtest" {
+		t.Errorf("expected as testtest")
 	}
 }

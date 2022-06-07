@@ -74,6 +74,8 @@ func (q *Queue) FilterItems(value item.Item[any]) {
 	q.Items = byItem
 }
 
+type T any
+
 func (q *Queue) UpdateItem(item2 item.Item[any], f func(e1, e2 *item.Item[any]) *item.Item[any]) {
 	find := q.Find(item2)
 	if find == nil {
@@ -84,7 +86,8 @@ func (q *Queue) UpdateItem(item2 item.Item[any], f func(e1, e2 *item.Item[any]) 
 	if f == nil {
 		find = &item2
 	} else {
-		find = f(find, &item2)
+		newOne := f(find, &item2)
+		find.Data = newOne.Data
 	}
 
 }
