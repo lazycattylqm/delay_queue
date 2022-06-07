@@ -22,22 +22,18 @@ func (aa *A) String() string {
 	return string(marshal)
 }
 
+func (aa *A) NameforA() {
+	aa.Name = "lqiming"
+}
+
 func main() {
 
-	a := &A{
+	a := A{
 		Name: "lqm",
-		Age:  18,
+		Age:  12,
 	}
-	b := &A{
-		Name: "fxl",
-		Age:  17,
-	}
-	as := make([]*A, 0)
-	as = append(as, a)
-	as = append(as, b)
-	fmt.Printf("as is %v \n", as)
-	a.Name = "lqm2"
-	fmt.Printf("as is %v \n", as)
+	a.NameforA()
+	fmt.Println(a)
 
 }
 
