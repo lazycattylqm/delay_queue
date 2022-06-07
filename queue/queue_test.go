@@ -3,7 +3,6 @@ package queue
 import (
 	"com.lqm.go.demo/item"
 	"fmt"
-
 	"testing"
 	"time"
 )
@@ -191,8 +190,11 @@ func TestQueue_Take(t *testing.T) {
 		case out = <-queue.C:
 			fmt.Printf("%v %v \n", time.Now(), out.Data)
 		case <-after:
-			fmt.Println("finish")
+			fmt.Println("time out finish")
 			return
+		case <-queue.F:
+			fmt.Println("finish for queue empty")
 		}
+
 	}
 }
