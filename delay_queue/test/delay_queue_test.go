@@ -11,3 +11,11 @@ func TestNew(t *testing.T) {
 		t.Error("New() should not be nil")
 	}
 }
+
+func TestGetQueue(t *testing.T) {
+	dq := delay_queue.New[any]()
+	q := dq.GetQueue()
+	if q == nil {
+		t.Error("GetQueue() should not be nil")
+	}
+}
