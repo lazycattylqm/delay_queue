@@ -35,7 +35,7 @@ func (dq *DelayQueue[T]) Run() {
 	dq.queue.Take()
 }
 
-func (dq *DelayQueue[T]) ExeFuncWhenDone(after <-chan time.Time, f func(id string, data T)) {
+func (dq *DelayQueue[T]) ExeFuncWhenDone(after <-chan time.Time, f func(id string, data T), doneToStop bool) {
 	ctx, cancelFunc := context.WithCancel(context.TODO())
 	go func() {
 		for {
@@ -44,13 +44,18 @@ func (dq *DelayQueue[T]) ExeFuncWhenDone(after <-chan time.Time, f func(id strin
 				f(outItem.Id, outItem.Data)
 			case <-after:
 				fmt.Println("for time out finish")
-				cancelFunc()
+				if doneToStop {
+					cancelFunc()
+				}
+
 			}
 		}
 	}()
-	select {
-	case <-ctx.Done():
-		fmt.Println("finished by user or other reason")
-	}
+	go func() {
+		select {
+		case <-ctx.Done():
+			fmt.Println("finished by user or other reason")
+		}
+	}()
 
 }

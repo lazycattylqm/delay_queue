@@ -3,6 +3,7 @@ package test
 import (
 	"com.lqm.demo/delay_queue"
 	"com.lqm.go.demo/item"
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -83,6 +84,7 @@ func TestOffer_Update(t *testing.T) {
 }
 
 func TestRunTask(t *testing.T) {
+	timeout, _ := context.WithTimeout(context.Background(), time.Second*10)
 	dq := delay_queue.New[string]()
 	i := item.New("id", 3000, "data")
 	dq.OfferTask(
@@ -104,9 +106,15 @@ func TestRunTask(t *testing.T) {
 			return new
 		},
 	)
+
 	dq.ExeFuncWhenDone(
 		time.After(time.Second*5), func(id string, data string) {
 			fmt.Printf("id is %s, data is %s\n", id, data)
-		},
+		}, false,
 	)
+	select {
+	case <-timeout.Done():
+		fmt.Println("finish main")
+	}
+
 }
