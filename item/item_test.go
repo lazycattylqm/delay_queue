@@ -52,8 +52,8 @@ func TestNotExpire(t *testing.T) {
 	i := New("1", 3000, "test")
 	time.Sleep(time.Duration(2) * time.Second)
 	i.Update("test")
-	if i.Expire > 1000 {
-		t.Errorf("Item expire should be 1000, got %d", i.Expire)
+	if i.Expire < 3000 {
+		t.Errorf("Item expire should be 3000, got %d", i.Expire)
 	}
 
 }
@@ -92,9 +92,6 @@ func TestNewWithUnitAndExpire(t *testing.T) {
 	time.Sleep(1 * time.Second)
 	if i.Expired() {
 		t.Errorf("Item should not be expired, got %s", i.Id)
-	}
-	if i.Expire > 2 {
-		t.Errorf("Item expire should be less than 2, got %d", i.Expire)
 	}
 	time.Sleep(3 * time.Second)
 	if !i.Expired() {

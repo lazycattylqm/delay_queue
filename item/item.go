@@ -83,8 +83,11 @@ func (i *Item[T]) EqualId(another Item[T]) bool {
 func (i *Item[T]) Expired() bool {
 	i.mu.Lock()
 	defer i.mu.Unlock()
-	i.updateExpireTime()
-	return i.Expire == 0
+	if i.checkExpired() {
+		i.Expire = 0
+		return true
+	}
+	return false
 }
 
 func (i *Item[T]) checkExpired() bool {
