@@ -1,7 +1,7 @@
 # delay_queue
 a go implementation of delay queue
 
-# way to run
+# way to run local
 create go.work and write follows
 
 ```text
