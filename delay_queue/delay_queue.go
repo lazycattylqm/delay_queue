@@ -32,7 +32,12 @@ func (dq *DelayQueue[T]) OfferTask(item item.Item[T], f func(old, new item.Item[
 }
 
 func (dq *DelayQueue[T]) Run() {
-	dq.queue.Take()
+	once := sync.Once{}
+	once.Do(
+		func() {
+			dq.queue.Take()
+		},
+	)
 }
 
 func (dq *DelayQueue[T]) ExeFuncWhenDone(after <-chan time.Time, f func(id string, data T), doneToStop bool) {
