@@ -3,7 +3,9 @@ package test
 import (
 	"com.lqm.demo/delay_queue"
 	"com.lqm.go.demo/item"
+	"fmt"
 	"testing"
+	"time"
 )
 
 func TestNew(t *testing.T) {
@@ -78,4 +80,33 @@ func TestOffer_Update(t *testing.T) {
 	if dq.GetQueue().Items[0].Data != "data3" {
 		t.Error("OfferTask() should  be data3")
 	}
+}
+
+func TestRunTask(t *testing.T) {
+	dq := delay_queue.New[string]()
+	i := item.New("id", 3000, "data")
+	dq.OfferTask(
+		*i, func(old, new item.Item[string]) item.Item[string] {
+			return new
+		},
+	)
+	dq.Run()
+	i2 := item.New("id2", 3000, "data")
+	dq.OfferTask(
+		*i2, func(old, new item.Item[string]) item.Item[string] {
+			return new
+		},
+	)
+
+	i3 := item.New("id", 3000, "data3")
+	dq.OfferTask(
+		*i3, func(old, new item.Item[string]) item.Item[string] {
+			return new
+		},
+	)
+	dq.ExeFuncWhenDone(
+		time.After(time.Second*5), func(id string, data string) {
+			fmt.Printf("id is %s, data is %s\n", id, data)
+		},
+	)
 }
