@@ -5,6 +5,7 @@ import (
 	"com.lqm.go.demo/item"
 	"context"
 	"fmt"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -120,6 +121,13 @@ func Test_Run_Task_2(t *testing.T) {
 			return new
 		},
 	)
+	for i := 0; i < 5; i++ {
+		dq.OfferTask(
+			*item.New("id4", 1000, "datanew"+strconv.Itoa(i)), func(old, new item.Item[string]) item.Item[string] {
+				return new
+			},
+		)
+	}
 	select {
 	case <-timeout.Done():
 		fmt.Println("finish main")
