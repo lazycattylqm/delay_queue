@@ -154,7 +154,7 @@ func TestRunTask(t *testing.T) {
 	dq.ExeFuncWhenDone(
 		time.After(time.Second*5), func(id string, data string) {
 			fmt.Printf("id is %s, data is %s\n", id, data)
-		}, false,
+		}, true,
 	)
 	select {
 	case <-timeout.Done():
