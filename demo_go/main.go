@@ -36,9 +36,24 @@ func (b *B) NameforA() {
 	b.A.NameforA()
 }
 
+type Gen[T any, R any] struct {
+	Data T
+}
+
+func (g *Gen[T, R]) DoSth(f func(d T) R) {
+	r := f(g.Data)
+	fmt.Printf("%v \n", r)
+}
+
 func main() {
-	b := new(B)
-	b.NameforA()
+	gen := Gen[int, string]{
+		Data: 30,
+	}
+	gen.DoSth(
+		func(d int) string {
+			return "test " + strconv.Itoa(d)
+		},
+	)
 
 }
 
