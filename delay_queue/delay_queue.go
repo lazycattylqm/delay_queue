@@ -25,7 +25,7 @@ func (dq *DelayQueue[T]) GetQueue() *queue.Queue[T] {
 	return dq.queue
 }
 
-func (dq *DelayQueue[T]) OfferTask(item item.Item[T], f func(old, new item.Item[T]) item.Item[T]) {
+func (dq *DelayQueue[T]) OfferTask(item item.Item[T], f func(old, new T) T) {
 	dq.mu.Lock()
 	defer dq.mu.Unlock()
 	dq.queue.Offer(item, f)
