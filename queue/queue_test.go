@@ -77,18 +77,11 @@ func TestFilter(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	queue := New[string]()
-	itemA := item.Item[string]{
-		Id:     "1",
-		Expire: 3000,
-		Data:   "test",
-	}
-	itemB := item.Item[string]{
-		Id:     "2",
-		Expire: 3000,
-		Data:   "test",
-	}
-	_ = queue.Add(itemA)
-	_ = queue.Add(itemB)
+	itemA := item.New[string]("1", 3000, "test")
+
+	itemB := item.New[string]("2", 3000, "test")
+	_ = queue.Add(*itemA)
+	_ = queue.Add(*itemB)
 
 	queue.UpdateItem(
 		item.Item[string]{
@@ -99,8 +92,8 @@ func TestUpdate(t *testing.T) {
 			return e1 + " " + e2
 		},
 	)
-	if queue.Items[0].Data != "testtest" {
-		t.Errorf("expected as testtest")
+	if queue.Items[0].Data != "test test" {
+		t.Errorf("expected as test test")
 	}
 }
 
