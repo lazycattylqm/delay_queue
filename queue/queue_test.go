@@ -98,23 +98,11 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestQueue_Offer(t *testing.T) {
-	itemA := item.Item[string]{
-		Id:     "1",
-		Expire: 3000,
-		Data:   "test",
-	}
+	itemA := item.New("1", 3000, "test")
 
-	itemB := item.Item[string]{
-		Id:     "2",
-		Expire: 3000,
-		Data:   "test2",
-	}
+	itemB := item.New("2", 3000, "test2")
 
-	itemC := item.Item[string]{
-		Id:     "1",
-		Expire: 3000,
-		Data:   "testc",
-	}
+	itemC := item.New("1", 3000, "testc")
 
 	itemD := item.Item[string]{
 		Id:     "3",
@@ -123,10 +111,10 @@ func TestQueue_Offer(t *testing.T) {
 	}
 
 	queue := New[string]()
-	_ = queue.Add(itemA)
-	_ = queue.Add(itemB)
+	_ = queue.Add(*itemA)
+	_ = queue.Add(*itemB)
 	queue.Offer(
-		itemC, func(e1, e2 string) string {
+		*itemC, func(e1, e2 string) string {
 			return e1 + " " + e2
 		},
 	)
