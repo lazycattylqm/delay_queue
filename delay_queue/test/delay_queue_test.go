@@ -29,7 +29,7 @@ func TestOffer(t *testing.T) {
 	dq := delay_queue.New[string]()
 	i := item.New("id", 3000, "data")
 	dq.OfferTask(
-		*i, func(old, new item.Item[string]) item.Item[string] {
+		*i, func(old, new string) string {
 			return new
 		},
 	)
@@ -43,13 +43,13 @@ func TestOffer_Add_2_items(t *testing.T) {
 	dq := delay_queue.New[string]()
 	i := item.New("id", 3000, "data")
 	dq.OfferTask(
-		*i, func(old, new item.Item[string]) item.Item[string] {
+		*i, func(old, new string) string {
 			return new
 		},
 	)
 	i2 := item.New("id2", 3000, "data")
 	dq.OfferTask(
-		*i2, func(old, new item.Item[string]) item.Item[string] {
+		*i2, func(old, new string) string {
 			return new
 		},
 	)
@@ -62,20 +62,20 @@ func TestOffer_Update(t *testing.T) {
 	dq := delay_queue.New[string]()
 	i := item.New("id", 3000, "data")
 	dq.OfferTask(
-		*i, func(old, new item.Item[string]) item.Item[string] {
+		*i, func(old, new string) string {
 			return new
 		},
 	)
 	i2 := item.New("id2", 3000, "data")
 	dq.OfferTask(
-		*i2, func(old, new item.Item[string]) item.Item[string] {
+		*i2, func(old, new string) string {
 			return new
 		},
 	)
 
 	i3 := item.New("id", 3000, "data3")
 	dq.OfferTask(
-		*i3, func(old, new item.Item[string]) item.Item[string] {
+		*i3, func(old, new string) string {
 			return new
 		},
 	)
@@ -90,21 +90,21 @@ func Test_Run_Task_2(t *testing.T) {
 	fmt.Println(time.Now())
 	i := item.New("id", 3000, "data")
 	dq.OfferTask(
-		*i, func(old, new item.Item[string]) item.Item[string] {
+		*i, func(old, new string) string {
 			return new
 		},
 	)
 	dq.Run()
 	i2 := item.New("id2", 3000, "data")
 	dq.OfferTask(
-		*i2, func(old, new item.Item[string]) item.Item[string] {
+		*i2, func(old, new string) string {
 			return new
 		},
 	)
 
 	i3 := item.New("id", 3000, "data3")
 	dq.OfferTask(
-		*i3, func(old, new item.Item[string]) item.Item[string] {
+		*i3, func(old, new string) string {
 			return new
 		},
 	)
@@ -117,13 +117,13 @@ func Test_Run_Task_2(t *testing.T) {
 	)
 	i4 := item.New("id4", 5000, "data4")
 	dq.OfferTask(
-		*i4, func(old, new item.Item[string]) item.Item[string] {
+		*i4, func(old, new string) string {
 			return new
 		},
 	)
 	for i := 0; i < 5; i++ {
 		dq.OfferTask(
-			*item.New("id4", 1000, "datanew"+strconv.Itoa(i)), func(old, new item.Item[string]) item.Item[string] {
+			*item.New("id4", 1000, "datanew"+strconv.Itoa(i)), func(old, new string) string {
 				return new
 			},
 		)
@@ -140,21 +140,21 @@ func TestRunTask(t *testing.T) {
 	dq := delay_queue.New[string]()
 	i := item.New("id", 3000, "data")
 	dq.OfferTask(
-		*i, func(old, new item.Item[string]) item.Item[string] {
+		*i, func(old, new string) string {
 			return new
 		},
 	)
 	dq.Run()
 	i2 := item.New("id2", 3000, "data")
 	dq.OfferTask(
-		*i2, func(old, new item.Item[string]) item.Item[string] {
+		*i2, func(old, new string) string {
 			return new
 		},
 	)
 
 	i3 := item.New("id", 3000, "data3")
 	dq.OfferTask(
-		*i3, func(old, new item.Item[string]) item.Item[string] {
+		*i3, func(old, new string) string {
 			return new
 		},
 	)
