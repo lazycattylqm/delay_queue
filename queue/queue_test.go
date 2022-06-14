@@ -95,14 +95,8 @@ func TestUpdate(t *testing.T) {
 			Id:     "1",
 			Expire: 3000,
 			Data:   "test",
-		}, func(e1, e2 item.Item[string]) item.Item[string] {
-			data := fmt.Sprint(e1.Data)
-			data2 := fmt.Sprint(e2.Data)
-			return item.Item[string]{
-				Id:     e2.Id,
-				Expire: e2.Expire + 1000,
-				Data:   data + data2,
-			}
+		}, func(e1, e2 string) string {
+			return e1 + " " + e2
 		},
 	)
 	if queue.Items[0].Data != "testtest" {
@@ -139,14 +133,8 @@ func TestQueue_Offer(t *testing.T) {
 	_ = queue.Add(itemA)
 	_ = queue.Add(itemB)
 	queue.Offer(
-		itemC, func(e1, e2 item.Item[string]) item.Item[string] {
-			data1 := fmt.Sprint(e1.Data)
-			data2 := fmt.Sprint(e2.Data)
-			return item.Item[string]{
-				Id:     e1.Id,
-				Expire: e1.Expire,
-				Data:   data1 + " " + data2,
-			}
+		itemC, func(e1, e2 string) string {
+			return e1 + " " + e2
 		},
 	)
 	if queue.Items[0].Data != "test testc" {
@@ -154,14 +142,8 @@ func TestQueue_Offer(t *testing.T) {
 	}
 
 	queue.Offer(
-		itemD, func(e1, e2 item.Item[string]) item.Item[string] {
-			data1 := fmt.Sprint(e1.Data)
-			data2 := fmt.Sprint(e2.Data)
-			return item.Item[string]{
-				Id:     e1.Id,
-				Expire: e1.Expire,
-				Data:   data1 + " " + data2,
-			}
+		itemD, func(e1, e2 string) string {
+			return e1 + " " + e2
 		},
 	)
 	if len(queue.Items) != 3 {
