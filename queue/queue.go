@@ -77,19 +77,19 @@ func (q *Queue[T]) FilterItems(value item.Item[T]) {
 	q.Items = byItem
 }
 
-func (q *Queue[T]) UpdateItem(item2 item.Item[T], f func(e1, e2 item.Item[T]) item.Item[T]) {
-	index, find := q.Find(item2)
+func (q *Queue[T]) UpdateItem(item2 item.Item[T], f func(e1, e2 T) T) {
+	_, find := q.Find(item2)
 	if find == nil {
 		return
 	}
 	q.mu.Lock()
 	defer q.mu.Unlock()
-	newOne := f(*find, item2)
-	q.Items[index] = &newOne
+	data := item2.Data
+	find.UpdateWithFunc(data, f)
 
 }
 
-func (q *Queue[T]) Offer(value item.Item[T], merge func(e1, e2 item.Item[T]) item.Item[T]) {
+func (q *Queue[T]) Offer(value item.Item[T], merge func(e1, e2 T) T) {
 	if _, ele := q.Find(value); ele == nil {
 		err := q.Add(value)
 		if err != nil {
