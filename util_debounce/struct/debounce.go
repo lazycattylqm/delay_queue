@@ -1,7 +1,7 @@
 package _struct
 
 type DataNode[T any] struct {
-	Count int
+	Count int `default:"1"`
 	Data  T
 }
 
