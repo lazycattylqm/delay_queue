@@ -1,8 +1,8 @@
 package _struct
 
 type DataNode[T any] struct {
-	Count int `default:"1"`
-	Data  T
+	Count int `json:"count"`
+	Data  T   `json:"data"`
 }
 
 func Merge[T any](old, new DataNode[T], f func(e1, e2 T) T) DataNode[T] {
