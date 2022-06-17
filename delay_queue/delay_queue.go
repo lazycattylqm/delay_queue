@@ -52,7 +52,6 @@ func (dq *DelayQueue[T]) ExeFuncWhenDone(after <-chan time.Time, f func(id strin
 				if doneToStop {
 					cancelFunc()
 				}
-
 			}
 		}
 	}()
@@ -62,5 +61,4 @@ func (dq *DelayQueue[T]) ExeFuncWhenDone(after <-chan time.Time, f func(id strin
 			fmt.Println("finished by user or other reason")
 		}
 	}()
-
 }
