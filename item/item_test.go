@@ -2,6 +2,7 @@ package item
 
 import (
 	"encoding/json"
+	"fmt"
 	"sync"
 	"testing"
 	"time"
@@ -46,6 +47,39 @@ func TestUpdateWithFunc(t *testing.T) {
 	if i.Data != "test test New" {
 		t.Errorf("Item data should be test, got %s", i.Data)
 	}
+}
+
+func TestUpdateWithFunc2(t *testing.T) {
+	i := New("1", 10000, "test")
+	if i.Data != "test" {
+		t.Errorf("Item data should be test, got %s", i.Data)
+	}
+	group := sync.WaitGroup{}
+	group.Add(2)
+	go func() {
+		i.UpdateWithFunc(
+			"test New", func(old, new string) string {
+				fmt.Println("test new update")
+				time.Sleep(time.Duration(5) * time.Second)
+				return new
+			},
+		)
+		fmt.Println("test new done")
+		group.Done()
+	}()
+	go func() {
+		i.UpdateWithFunc(
+			"test New2", func(old, new string) string {
+				fmt.Println("test new 2 update")
+				time.Sleep(time.Duration(6) * time.Second)
+				return new
+			},
+		)
+		fmt.Println("test new 2 done")
+		group.Done()
+	}()
+	group.Wait()
+	fmt.Println(i)
 }
 
 func TestNotExpire(t *testing.T) {
