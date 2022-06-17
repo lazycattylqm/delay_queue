@@ -45,7 +45,7 @@ func NewWithUnit[T any](id string, data T, expire int64, unit time.Duration) *It
 }
 
 func (i *Item[T]) UpdateWithFunc(data T, updateFunc func(old, new T) T) {
-	defer i.Expired()
+	//defer i.Expired()
 	i.updateData(data, updateFunc)
 }
 
@@ -55,8 +55,8 @@ func (i *Item[T]) Update(data T) {
 }
 
 func (i *Item[T]) updateData(data T, updateFunc func(old, new T) T) {
-	i.mu.Lock()
-	defer i.mu.Unlock()
+	//i.mu.Lock()
+	//defer i.mu.Unlock()
 	if i.checkExpired() {
 		return
 	}
