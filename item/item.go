@@ -65,7 +65,6 @@ func (i *Item[T]) updateData(data T, updateFunc func(old, new T) T) {
 	} else {
 		i.Data = updateFunc(i.Data, data)
 	}
-
 }
 
 func (i *Item[T]) updateExpireTime() {
