@@ -3,6 +3,7 @@ package delay_lock
 import (
 	"context"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -28,5 +29,33 @@ func New(duration time.Duration) *DelayMutex {
 func (m *DelayMutex) Lock() {
 	m.Mutex.Lock()
 	defer m.Mutex.Unlock()
+
+}
+
+func (m *DelayMutex) checkForLock() bool {
+	canLock := atomic.CompareAndSwapInt32(&m.flag, 0, 1)
+	if !canLock {
+		return false
+	}
+	m.flag = 1
+	go func() {
+		select {
+		case <-m.timeOut.Done():
+			m.channel <- struct{}{}
+		}
+	}()
+	return true
+}
+
+func (m *DelayMutex) changeForUnlock() {
+	canUnLock := atomic.CompareAndSwapInt32(&m.flag, 1, 0)
+	if !canUnLock {
+		return
+	}
+	m.flag = 0
+	select {
+	case <-m.channel:
+		return
+	}
 
 }
