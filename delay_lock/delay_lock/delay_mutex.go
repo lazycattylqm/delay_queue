@@ -24,3 +24,9 @@ func New(duration time.Duration) *DelayMutex {
 		cancelF: cancelFunc,
 	}
 }
+
+func (m *DelayMutex) Lock() {
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
+
+}
